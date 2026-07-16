@@ -7,7 +7,7 @@ export function ProfessionalResultCard({ professional }) {
   return (
     <Link
       to={`/profile/${professional.id}`}
-      className="flex items-center gap-3 border-b border-ink-50 px-4 py-3.5 hover:bg-honey-50/60"
+      className="flex items-center gap-3 px-5 py-4 transition-colors hover:bg-honey-50/60"
     >
       <Avatar src={professional.avatar_url} name={professional.full_name} size="md" />
       <div className="min-w-0 flex-1">

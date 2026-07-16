@@ -35,7 +35,9 @@ export default function App() {
           <Route element={<AppShell />}>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/chats" element={<Chats />} />
+            <Route path="/chats" element={<Chats />}>
+              <Route path=":conversationId" element={<ChatDetail />} />
+            </Route>
             <Route path="/assignments" element={<AssignmentsCalendar />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<Profile />} />
@@ -44,7 +46,6 @@ export default function App() {
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/assignments/new" element={<CreateAssignment />} />
           <Route path="/assignments/:assignmentId" element={<AssignmentDetail />} />
-          <Route path="/chats/:conversationId" element={<ChatDetail />} />
           <Route path="/posts/new" element={<CreatePost />} />
           <Route path="/posts/mine" element={<MyPosts />} />
           <Route path="/posts/:postId" element={<PostDetail />} />

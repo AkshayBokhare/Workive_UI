@@ -4,9 +4,9 @@ export function PortfolioGrid({ media = [] }) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-1">
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
       {media.map((item) => (
-        <div key={item.id} className="aspect-square overflow-hidden bg-ink-100">
+        <div key={item.id} className="aspect-square overflow-hidden rounded-xl bg-ink-100">
           {item.media_type === 'video' ? (
             <video src={item.url} className="h-full w-full object-cover" muted />
           ) : (

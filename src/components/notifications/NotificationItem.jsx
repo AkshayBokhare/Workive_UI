@@ -46,8 +46,8 @@ export function NotificationItem({ notification }) {
     <Link
       to={linkFor(notification)}
       className={clsx(
-        'flex items-start gap-3 border-b border-ink-50 px-4 py-3',
-        !notification.is_read && 'bg-honey-50/60',
+        'flex items-start gap-3 px-5 py-4 transition-colors hover:bg-ink-50',
+        !notification.is_read && 'bg-honey-50/60 hover:bg-honey-50',
       )}
     >
       <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-honey-100 text-honey-600">

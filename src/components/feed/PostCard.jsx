@@ -38,7 +38,7 @@ export function PostCard({ post }) {
   const media = post.media?.[0]
 
   return (
-    <article className="border-b border-ink-100 bg-white pb-3">
+    <article className="overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-sm shadow-ink-900/5">
       <Link to={`/profile/${post.author.id}`} className="flex items-center gap-3 px-4 py-3">
         <Avatar src={post.author.avatar_url} name={post.author.full_name} size="sm" />
         <div>
@@ -88,8 +88,8 @@ export function PostCard({ post }) {
         )}
       </div>
 
-      {showComments && (
-        <div className="mt-2 flex items-center gap-2 border-t border-ink-100 px-4 pt-2">
+      {showComments ? (
+        <div className="mt-2 flex items-center gap-2 border-t border-ink-100 px-4 py-3">
           <input
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
@@ -107,6 +107,8 @@ export function PostCard({ post }) {
             <Send size={18} />
           </button>
         </div>
+      ) : (
+        <div className="pb-3" />
       )}
     </article>
   )

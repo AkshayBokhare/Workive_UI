@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 import { Avatar } from '../ui/Avatar'
 import { useAuthStore } from '../../store/authStore'
 
@@ -11,7 +12,7 @@ function formatTime(iso) {
   return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
 }
 
-export function ConversationListItem({ conversation }) {
+export function ConversationListItem({ conversation, isActive }) {
   const currentUser = useAuthStore((s) => s.user)
   const isDirect = conversation.type === 'direct'
   const peer = isDirect ? conversation.participants.find((p) => p.id !== currentUser?.id) : null
@@ -22,7 +23,10 @@ export function ConversationListItem({ conversation }) {
   return (
     <Link
       to={`/chats/${conversation.id}`}
-      className="flex items-center gap-3 border-b border-ink-50 px-4 py-3 hover:bg-honey-50/60"
+      className={clsx(
+        'flex items-center gap-3 border-b border-ink-50 px-4 py-3 transition-colors',
+        isActive ? 'bg-honey-100/70' : 'hover:bg-honey-50/60',
+      )}
     >
       <Avatar src={avatarSrc} name={title} size="md" />
       <div className="min-w-0 flex-1">

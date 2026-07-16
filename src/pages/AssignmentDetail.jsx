@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, MapPin, MessageCircle } from 'lucide-react'
+import { MapPin, MessageCircle } from 'lucide-react'
 import { Avatar } from '../components/ui/Avatar'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { Spinner } from '../components/ui/Spinner'
+import { Card } from '../components/ui/Card'
+import { PageHeader } from '../components/layout/PageHeader'
 import { useAuthStore } from '../store/authStore'
 import * as assignmentsApi from '../api/assignments'
 import * as conversationsApi from '../api/conversations'
@@ -52,16 +54,15 @@ export default function AssignmentDetail() {
   const status = ASSIGNMENT_STATUS_STYLES[assignment.status]
 
   return (
-    <div>
-      <header className="safe-top sticky top-0 z-20 flex items-center gap-2 bg-white/95 px-4 pb-3 pt-4 backdrop-blur">
-        <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center">
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="flex-1 truncate font-bold text-ink-900">{assignment.name}</h1>
-        <Badge className={status.className}>{status.label}</Badge>
-      </header>
+    <div className="mx-auto max-w-3xl px-8 py-8">
+      <PageHeader
+        title={assignment.name}
+        backTo="/assignments"
+        backLabel="Back to assignments"
+        actions={<Badge className={status.className}>{status.label}</Badge>}
+      />
 
-      <div className="px-4 pb-24 pt-2">
+      <Card className="p-6">
         {assignment.location_text && (
           <p className="flex items-center gap-1.5 text-sm text-ink-600">
             <MapPin size={15} /> {assignment.location_text}
@@ -69,7 +70,7 @@ export default function AssignmentDetail() {
         )}
         {assignment.description && <p className="mt-2 text-sm text-ink-600">{assignment.description}</p>}
 
-        <section className="mt-5">
+        <section className="mt-6">
           <h3 className="font-bold text-ink-900">Schedule</h3>
           <div className="mt-2 flex flex-col gap-2">
             {assignment.days.map((d) => (
@@ -85,7 +86,7 @@ export default function AssignmentDetail() {
           </div>
         </section>
 
-        <section className="mt-5">
+        <section className="mt-6">
           <h3 className="font-bold text-ink-900">Team ({assignment.participants.length})</h3>
           <div className="mt-2 flex flex-col divide-y divide-ink-50">
             {assignment.participants.map((p) => (
@@ -106,7 +107,7 @@ export default function AssignmentDetail() {
         </section>
 
         {!isOwner && myParticipant?.status === 'invited' && (
-          <div className="mt-5 flex gap-2">
+          <div className="mt-6 flex gap-2">
             <Button className="flex-1" loading={respondMutation.isPending} onClick={() => respondMutation.mutate('accepted')}>
               Accept
             </Button>
@@ -122,7 +123,7 @@ export default function AssignmentDetail() {
         )}
 
         {isOwner && assignment.status !== 'cancelled' && assignment.status !== 'completed' && (
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-2">
             {assignment.status !== 'approved' && (
               <Button size="sm" onClick={() => statusMutation.mutate('approved')}>
                 Mark approved
@@ -140,12 +141,12 @@ export default function AssignmentDetail() {
         {!isOwner && (
           <button
             onClick={() => openChatMutation.mutate()}
-            className="mt-5 flex items-center gap-2 text-sm font-semibold text-honey-600"
+            className="mt-6 flex items-center gap-2 text-sm font-semibold text-honey-600"
           >
             <MessageCircle size={16} /> Message owner
           </button>
         )}
-      </div>
+      </Card>
     </div>
   )
 }

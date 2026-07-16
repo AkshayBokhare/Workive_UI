@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Avatar } from '../components/ui/Avatar'
 import { Spinner } from '../components/ui/Spinner'
+import { Card } from '../components/ui/Card'
+import { PageHeader } from '../components/layout/PageHeader'
 import { PostCard } from '../components/feed/PostCard'
 import { useAuthStore } from '../store/authStore'
 import * as postsApi from '../api/posts'
@@ -42,25 +44,26 @@ export default function PostDetail() {
   const isOwner = post.author.id === currentUser?.id
 
   return (
-    <div>
-      <header className="safe-top sticky top-0 z-20 flex items-center justify-between bg-white/95 px-4 pb-3 pt-4 backdrop-blur">
-        <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center">
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="font-bold text-ink-900">Post</h1>
-        {isOwner ? (
-          <button onClick={() => deletePostMutation.mutate()} className="text-coral-500">
-            <Trash2 size={18} />
-          </button>
-        ) : (
-          <span className="w-8" />
-        )}
-      </header>
+    <div className="mx-auto max-w-2xl px-8 py-8">
+      <PageHeader
+        title="Post"
+        backTo="/"
+        actions={
+          isOwner && (
+            <button
+              onClick={() => deletePostMutation.mutate()}
+              className="flex items-center gap-1.5 text-sm font-medium text-coral-500 hover:text-coral-600"
+            >
+              <Trash2 size={16} /> Delete
+            </button>
+          )
+        }
+      />
 
       <PostCard post={post} />
 
-      <section className="px-4 py-3">
-        <h3 className="mb-2 font-semibold text-ink-900">Comments</h3>
+      <Card className="mt-6 p-5">
+        <h3 className="mb-3 font-semibold text-ink-900">Comments</h3>
         <div className="flex flex-col gap-3">
           {(commentsPage?.items || []).map((c) => (
             <div key={c.id} className="flex items-start gap-2">
@@ -72,7 +75,7 @@ export default function PostDetail() {
                 </p>
               </div>
               {(c.user.id === currentUser?.id || isOwner) && (
-                <button onClick={() => deleteCommentMutation.mutate(c.id)} className="text-ink-300">
+                <button onClick={() => deleteCommentMutation.mutate(c.id)} className="text-ink-300 hover:text-coral-500">
                   <Trash2 size={14} />
                 </button>
               )}
@@ -80,7 +83,7 @@ export default function PostDetail() {
           ))}
           {commentsPage?.items?.length === 0 && <p className="text-sm text-ink-400">No comments yet.</p>}
         </div>
-      </section>
+      </Card>
     </div>
   )
 }

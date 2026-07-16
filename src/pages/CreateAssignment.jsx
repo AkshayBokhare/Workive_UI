@@ -5,6 +5,8 @@ import { X, Plus, Search } from 'lucide-react'
 import { Input, Textarea } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { Avatar } from '../components/ui/Avatar'
+import { Card } from '../components/ui/Card'
+import { PageHeader } from '../components/layout/PageHeader'
 import { DurationPicker } from '../components/assignments/DurationPicker'
 import { apiErrorMessage } from '../api/client'
 import * as searchApi from '../api/search'
@@ -66,17 +68,12 @@ export default function CreateAssignment() {
   }
 
   return (
-    <div>
-      <header className="safe-top sticky top-0 z-20 flex items-center justify-between bg-white/95 px-4 pb-3 pt-4 backdrop-blur">
-        <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center">
-          <X size={20} />
-        </button>
-        <h1 className="font-bold text-ink-900">New assignment</h1>
-        <span className="w-8" />
-      </header>
+    <div className="mx-auto max-w-2xl px-8 py-8">
+      <PageHeader title="New assignment" backTo="/assignments" backLabel="Cancel" />
 
-      <div className="flex flex-col gap-5 px-4 pb-28 pt-2">
+      <Card className="flex flex-col gap-5 p-6">
         <Input
+          label="Assignment name"
           placeholder="Assignment name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -143,8 +140,9 @@ export default function CreateAssignment() {
         </div>
 
         <div className="flex flex-col gap-4">
+          <p className="text-sm font-medium text-ink-700">Schedule</p>
           {days.map((day, index) => (
-            <div key={index} className="rounded-2xl border border-ink-100 p-3">
+            <div key={index} className="rounded-xl border border-ink-100 p-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-ink-800">Day {index + 1}</p>
                 {days.length > 1 && (
@@ -176,31 +174,30 @@ export default function CreateAssignment() {
           ))}
           <button
             onClick={() => setDays((prev) => [...prev, emptyDay()])}
-            className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-ink-300 py-2.5 text-sm font-medium text-ink-600"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-ink-300 py-2.5 text-sm font-medium text-ink-600 hover:bg-ink-50"
           >
             <Plus size={15} /> Add more days
           </button>
         </div>
 
-        <Input placeholder="Add location" value={location} onChange={(e) => setLocation(e.target.value)} />
-        <Textarea placeholder="Description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+        <Input label="Location" placeholder="Add location" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <Textarea label="Description" placeholder="Description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
 
         {createMutation.isError && (
           <p className="text-sm text-coral-600">{apiErrorMessage(createMutation.error)}</p>
         )}
-      </div>
 
-      <div className="safe-bottom fixed inset-x-0 bottom-0 mx-auto w-full max-w-lg border-t border-ink-100 bg-white p-4">
-        <Button
-          size="lg"
-          className="w-full"
-          disabled={!name.trim() || !days.some((d) => d.date)}
-          loading={createMutation.isPending}
-          onClick={() => createMutation.mutate()}
-        >
-          Create
-        </Button>
-      </div>
+        <div className="flex justify-end border-t border-ink-100 pt-5">
+          <Button
+            size="lg"
+            disabled={!name.trim() || !days.some((d) => d.date)}
+            loading={createMutation.isPending}
+            onClick={() => createMutation.mutate()}
+          >
+            Create assignment
+          </Button>
+        </div>
+      </Card>
     </div>
   )
 }

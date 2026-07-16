@@ -1,8 +1,13 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
-import { Home, MessageCircle, Plus, CalendarDays, User } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Home, MessageCircle, CalendarDays, User, Search, Plus, Bell, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { CreateSheet } from './CreateSheet'
+import { Avatar } from '../ui/Avatar'
+import { useAuthStore } from '../../store/authStore'
+import { useLogout } from '../../hooks/useAuth'
+import * as notificationsApi from '../../api/notifications'
 
 const NAV_ITEMS = [
   { to: '/', icon: Home, label: 'Home', end: true },
@@ -14,32 +19,91 @@ const NAV_ITEMS = [
 export function AppShell() {
   const [createOpen, setCreateOpen] = useState(false)
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
+  const logout = useLogout()
+
+  const { data: unread } = useQuery({
+    queryKey: ['unread-count'],
+    queryFn: notificationsApi.getUnreadCount,
+    refetchInterval: 30_000,
+  })
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-lg flex-col bg-honey-50">
-      <main className="flex-1 pb-24">
-        <Outlet />
-      </main>
+    <div className="flex h-screen w-full bg-honey-50/40">
+      <aside className="flex w-64 shrink-0 flex-col border-r border-ink-100 bg-white">
+        <div className="flex items-center gap-2.5 px-5 py-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-900 text-lg font-black text-honey-400">
+            W
+          </div>
+          <span className="text-lg font-extrabold text-ink-900">Workive</span>
+        </div>
 
-      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-lg border-t border-ink-100 bg-white/95 backdrop-blur">
-        <div className="flex items-center justify-between px-2 py-2">
-          {NAV_ITEMS.slice(0, 2).map((item) => (
+        <div className="px-3">
+          <Link
+            to="/search"
+            className="flex h-10 items-center gap-2 rounded-xl border border-ink-100 bg-honey-50/60 px-3 text-sm text-ink-400 transition-colors hover:border-ink-200"
+          >
+            <Search size={16} />
+            Search
+          </Link>
+        </div>
+
+        <nav className="mt-5 flex flex-col gap-1 px-3">
+          {NAV_ITEMS.map((item) => (
             <NavItem key={item.to} {...item} />
           ))}
+        </nav>
 
+        <div className="px-3 pt-4">
           <button
             onClick={() => setCreateOpen(true)}
-            className="flex h-12 w-12 -translate-y-3 items-center justify-center rounded-2xl bg-honey-500 text-ink-900 shadow-lg shadow-honey-500/40 active:scale-95 transition-transform"
-            aria-label="Create"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-honey-500 text-sm font-semibold text-ink-900 shadow-sm shadow-honey-500/30 transition-colors hover:bg-honey-400"
           >
-            <Plus size={24} strokeWidth={2.5} />
+            <Plus size={17} strokeWidth={2.5} />
+            Create
           </button>
-
-          {NAV_ITEMS.slice(2).map((item) => (
-            <NavItem key={item.to} {...item} />
-          ))}
         </div>
-      </nav>
+
+        <div className="flex-1" />
+
+        <div className="border-t border-ink-100 p-3">
+          <Link
+            to="/notifications"
+            className="flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50"
+          >
+            <span className="relative flex h-6 w-6 items-center justify-center">
+              <Bell size={18} />
+              {unread?.unread_count > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-coral-500 text-[9px] font-bold text-white">
+                  {unread.unread_count > 9 ? '9+' : unread.unread_count}
+                </span>
+              )}
+            </span>
+            Notifications
+          </Link>
+
+          <div className="mt-1 flex items-center gap-2 rounded-xl px-2 py-2">
+            <Link to="/profile" className="flex min-w-0 flex-1 items-center gap-2.5">
+              <Avatar src={user?.avatar_url} name={user?.full_name} size="sm" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-ink-900">{user?.full_name}</p>
+                <p className="truncate text-xs text-ink-400">{user?.city || 'Set your location'}</p>
+              </div>
+            </Link>
+            <button
+              onClick={() => logout()}
+              aria-label="Log out"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-ink-50 hover:text-coral-500"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
 
       <CreateSheet
         open={createOpen}
@@ -64,15 +128,15 @@ function NavItem({ to, icon: Icon, label, end }) {
       end={end}
       className={({ isActive }) =>
         clsx(
-          'flex flex-1 flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-[11px] font-medium transition-colors',
-          isActive ? 'text-honey-600' : 'text-ink-400 hover:text-ink-600',
+          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
+          isActive ? 'bg-honey-100 text-honey-800' : 'text-ink-600 hover:bg-ink-50',
         )
       }
     >
       {({ isActive }) => (
         <>
-          <Icon size={22} strokeWidth={isActive ? 2.4 : 2} />
-          <span>{label}</span>
+          <Icon size={18} strokeWidth={isActive ? 2.4 : 2} />
+          {label}
         </>
       )}
     </NavLink>

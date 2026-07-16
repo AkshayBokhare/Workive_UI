@@ -14,9 +14,9 @@ export function Sheet({ open, onClose, title, children }) {
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-[1px]" onClick={onClose} />
-      <div className="relative z-10 max-h-[88vh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-xl sm:max-w-md sm:rounded-3xl">
+      <div className="relative z-10 max-h-[88vh] w-full max-w-md overflow-y-auto rounded-2xl border border-ink-100 bg-white p-5 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold text-ink-900">{title}</h2>
           <button

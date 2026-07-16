@@ -23,7 +23,7 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-honey-50 px-6">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-ink-100 bg-white p-8 shadow-sm shadow-ink-900/5">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-ink-900 text-2xl font-black text-honey-400">
             W
